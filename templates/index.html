@@ -1,0 +1,44 @@
+
+
+{% extends "layout.html" %}
+
+{% block title %}Catalog{% endblock title %}
+
+{% block content %}
+<!-- Page Content -->
+<div class="container-fluid item-list">
+<section id="catalog" class="section">
+
+              
+              <div class="nav" style="display: flex;flex-wrap: wrap;" >
+            
+            {% for item in items %}
+              <div class="panel-group" style="width: 300px; margin: 1%;">
+                <div class="panel panel-primary card">
+                  <div class="panel-heading mb-2">
+                    <h4 class="panel-title ml-2">
+                      <a href="{{ url_for('itemdetails',id=item.id) }}" style="color:white;">{{ item.name }}</a>
+                    </h3>
+                  </div>
+                  <div id="{{ loop.index }}" class="panel"  >
+                    <div class="panel-body" align="center">
+                        <img class="img-responsive" src="{{ item.image }}" alt="{{ item.name }}" style="width: 200px; height: 200px;">
+                        <hr class="hr">
+                        <div align="left" class="ml-2" >
+                        <div class="brand">Brand: {{item.brand}}</div>
+                        <div class="brand">Price: {{item.price}}</div>
+                        <div class="brand">Description: {{item.description[:28]}}..</div>
+                        <a href="{{ url_for('itemdetails',id=item.id) }}" class="btn btn-primary mb-2 mt-1">more</a>
+                        </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            {%else%}
+            <h2>There are no items from sleceted category!</h2>
+            {% endfor %}
+            </div>
+</section>
+</div>
+<!-- /.section -->
+{% endblock %}

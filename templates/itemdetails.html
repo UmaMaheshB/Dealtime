@@ -1,0 +1,32 @@
+
+
+{% extends "layout.html" %}
+
+{% block title %}Catalog{% endblock title %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="md-12">
+      <p style="width: 900px;">
+      <img class="img-responsive" src="{{ item.image }}" alt="{{ item.name }}" style="width: 350px; height: 350px; float: left;">
+      <span style="font-weight: bold;">{{item.name}}</span><br>
+      <span class="brand"> Description :</span>
+      {{item.description}}<br>
+      <span class="brand"> Brand :</span>
+      {{item.brand}}<br>
+      <span class="brand"> Price :</span>
+      {{item.price}}<br>
+      <span class="brand"> Category :</span>
+      {{item.category.name}}<br>
+      {% if 'email' in session %}
+      <a href="{{url_for('edititem',id=item.id)}}" class="btn btn-primary">Edit</a>
+      <a href="{{url_for('deleteitem',id=item.id)}}" class="btn btn-danger">Delete</a>
+      {%endif%}
+      </p>
+    </div>
+  </div>
+</div>
+      
+<!-- Page Content -->
+{% endblock %}

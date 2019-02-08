@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    {% if title %}
+        <title>Catalog - {{ title }}</title>
+    {% else %}
+        <title>Catalog </title>
+    {% endif %}
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4" href="/">Dealtime</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              {% if 'email' in session %}
+              <a class="nav-item nav-link" href="{{ url_for('addcategory') }}">Add Category</a>
+              <a class="nav-item nav-link" href="{{ url_for('additem') }}">Add Item</a>
+              {%endif%}
+            </div>
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              <!-- <a class="nav-item nav-link" href="{{url_for('gdisconnect')}}">Logout</a>
+               -->
+
+               {% if 'email' in session %}
+               <li class="dropdown">
+                  <img id="profile-img" class="dropdown-toggle" data-toggle="dropdown" src="{{session.picture}}" height="10px" alt="profie pic">
+
+                  <!-- <a class="dropdown-toggle" data-toggle="dropdown" href="#">Page 1 <span class="caret"></span></a>
+                   -->
+
+                   <ul class="dropdown-menu">
+                    <li style="border-bottom:1px solid #dee2e6;"><a href="#">{{session.username}}</a></li>
+                    <!-- <li style="border-bottom:1px solid #dee2e6;"><a href="#">My Items</a></li>
+                    <li style="border-bottom:1px solid #dee2e6;"><a href="#">My Categories</a></li>
+                     -->
+                     <li style="border-bottom:1px solid #dee2e6;"><a href="{{url_for('showprofile')}}">My Profile</a></li>
+                    <li><a href="{{url_for('gdisconnect')}}">Logout</a></li>
+                  </ul>
+              </li>
+              {%else%}
+              <a class="nav-item nav-link" href="{{url_for('showLogin')}}">Login</a>
+              
+              {% endif %}
+
+
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container-fluid">
+      <div class="row">
+        <!-- for sidebar list of categories -->
+        <div class="col-md-3 mt-3">
+          <div class="content-section">
+            <div>
+            
+            {%if session.username %}
+            <h3 style="float:left;">Categories</h3>
+            <a href="{{url_for('addcategory')}}"><button class="w3-btn w3-green" style="margin-left: 90px;"><i class="fa fa-plus"></i></button></a>
+            {%else%}
+            <h3>Categories</h3>
+            {%endif%}
+
+            </div>
+            <p class='text-muted'>
+              <!-- <ul class="list-group">
+               -->  <table class="table">
+                
+                {% for category in categories %}
+                <!--<li class="list-group-item list-group-item-light"><a href="{{ url_for('showitems',id=1) }}">{{ category.name }}</a></li>-->
+                {%if session.username %}
+                  
+                <tr class="row ">
+                  <td class="col-sm-6">
+                    <a href="{{ url_for('showitems',id=category.id) }}" style="font-size: 20px;">{{ category.name }}</a>
+                  </td>
+                  <td id="nav-buttons"> 
+                    <a href="{{ url_for('editcategory',id=category.id)}}"><button class="w3-btn w3-blue"><i class="fa fa-edit"></i></button></a>
+                  </td>
+                  <td class="nav-buttons">
+                    <a href="{{ url_for('deletecategory',id=category.id) }}"><button class="w3-btn w3-red"><i class="fa fa-trash"></i></button></a>
+                    <!-- <a href="#" class="w3-bar-item w3-button"><i class="fa fa-trash"></i></a> -->
+                  </td>
+                  
+                </tr>
+                {%else%}
+                <tr class="row ">
+                  <td class="col-sm-12">
+                    <a href="{{ url_for('showitems',id=category.id) }}" style="font-size: 20px;">{{ category.name }}</a>
+                  </td>
+                </tr>
+                {%endif%}
+                {%endfor%}
+                </table>
+              <!-- </ul> -->
+            </p>
+          </div>
+        </div>
+        <!-- this is main area we will display items of respective categories -->
+        <div class="col-md-9 mt-2">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </main>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+  
